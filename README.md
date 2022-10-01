@@ -5,7 +5,8 @@ Please downloads <a href='https://fcav.engin.umich.edu/projects/driving-in-the-m
 
 ## Setting
 ```
-pip install requirements.txt
+pip install CUT/requirements.txt
+pip install yolov5/requirements.txt
 ```
 
 
@@ -13,6 +14,8 @@ pip install requirements.txt
 ## Citation
 
 ```
+https://github.com/ultralytics/yolov5
+
 @inproceedings{johnson2017driving,
   title={Driving in the Matrix: Can virtual worlds replace human-generated annotations for real world tasks?},
   author={Johnson-Roberson, Matthew and Barto, Charles and Mehta, Rounak and Sridhar, Sharath Nittur and Rosaen, Karl and Vasudevan, Ram},
