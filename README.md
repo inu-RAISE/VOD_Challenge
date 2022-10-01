@@ -3,7 +3,7 @@
 Please downloads <a href='https://fcav.engin.umich.edu/projects/driving-in-the-matrix'>VOC Datasets</a>
 
 
-## Setting
+## Enviornment Setting
 ```
 pip install CUT/requirements.txt
 pip install yolov5/requirements.txt
