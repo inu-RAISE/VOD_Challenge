@@ -9,6 +9,16 @@ pip install CUT/requirements.txt
 pip install yolov5/requirements.txt
 ```
 
+## Folder Setting for Generate Synthetic to Real Image
+
+```
+target_folder_name
+|trainA
+|trainB
+|testA
+|testB
+```
+Defualt direction of CUT  is A to B. i.e A is input images and B is target images.
 
 
 ## Citation
