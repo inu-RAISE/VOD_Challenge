@@ -4,9 +4,7 @@ from tqdm import tqdm
 import glob
 import xml.etree.ElementTree as ET
 from tqdm import tqdm
-from sklearn.moedel_selection import train_test_split
-import argparse
-
+from sklearn.model_selection import train_test_split
 
 def xml_to_yolo_bbox(bbox, w, h):
     # xmin, ymin, xmax, ymax
@@ -25,6 +23,11 @@ def yolo_to_xml_bbox(bbox, w, h):
     ymax = int((bbox[1] * h) + h_half_len)
     return [xmin, ymin, xmax, ymax]
 
+def mk_folder(path):
+    if not os.path.exists(path):
+        os.mkdir(path)
+
+
 def checking_folder(path):
     if path[-1] != '/':
         path += '/'
@@ -39,10 +42,8 @@ def yolo_VOC_setting(image_input_dir,label_input_dir,image_output_dir,label_outp
     class_ = 'car' or 'motorbike'
     '''
     ## folder setting
-    if not os.path.exists(image_output_dir):
-        os.mkdir(image_output_dir)
-    if not os.path.exists(label_output_dir):
-        os.mkdir(label_output_dir)
+    mk_folder(image_output_dir)
+    mk_folder(label_output_dir)
     ## check folder name format
     image_input_dir = checking_folder(image_input_dir)
     label_input_dir = checking_folder(label_input_dir)
@@ -73,11 +74,11 @@ def yolo_VOC_setting(image_input_dir,label_input_dir,image_output_dir,label_outp
                 result.append(f"{index} {bbox_string}")
 
         if result:
-            with open(os.path.join(label_output_dir, f"{filename}.txt"), "w", encoding="utf-8") as f:
+            with open(os.path.join(label_output_dir, f"voc_{filename}.txt"), "w", encoding="utf-8") as f:
                 f.write("\n".join(result))
-            shutil.copy2(image_input_dir+f"{filename}.jpg",image_output_dir+f"{filename}.jpg")
+            shutil.copy2(image_input_dir+f"{filename}.jpg",image_output_dir+f"voc_{filename}.jpg")
     
-    print(f'Complete VOC {class_} Folder Setting!')
+    print(f'Complete VOC voc_{class_}Folder Setting!')
 
 def yolo_vehicle_folder_setting(image_input_dir,label_input_dir,image_output_dir,label_output_dir,class_):
     
@@ -90,10 +91,8 @@ def yolo_vehicle_folder_setting(image_input_dir,label_input_dir,image_output_dir
     '''
     
     ## folder setting
-    if not os.path.exists(image_output_dir):
-        os.mkdir(image_output_dir)
-    if not os.path.exists(label_output_dir):
-        os.mkdir(label_output_dir)
+    mk_folder(image_output_dir)
+    mk_folder(label_output_dir)
         
     ## check folder name format
     image_input_dir = checking_folder(image_input_dir)
@@ -133,6 +132,7 @@ def yolo_vehicle_folder_setting(image_input_dir,label_input_dir,image_output_dir
                 if check:
                     shutil.copy2(image_input_dir+img_name, image_output_dir+img_name)
     print(f'Complete Training {class_} Data Setting!')
+
 
 def yolo_folder_setting(path,image_path,label_path,class_):
     '''
@@ -177,10 +177,46 @@ def yolo_folder_setting(path,image_path,label_path,class_):
     for img,lab in zip(valid_image,valid_label):
         shutil.move(image_path + img,new_path+'val/images/'+img)
         shutil.move(label_path + lab,new_path+'val/labels/'+lab)
+    print(f'YOLO folder setting Done!')
+
 
 if __name__ == '__main__':
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument('--input_label_dir',type=str)
-    # parser.add_argument('--input_image_dir',type=str)
-    # parser.add_argument('--output_image_dir',type=str)
     
+    parent_path = '/data/IEEE_BigData/sub'
+    voc_car_path = parent_path+'/'+'voc_car/'
+    voc_cycle_path = parent_path+'/'+'voc_cycle/'
+    train_car_path = parent_path+'/'+'train_car/'
+    train_cycle_path = parent_path+'/'+'train_cycle/'
+    
+    mk_folder(parent_path)  
+    mk_folder(voc_car_path)
+    mk_folder(voc_cycle_path)
+    mk_folder(train_car_path)
+    mk_folder(train_cycle_path)
+    
+    voc_input_label_dir = '/data/IEEE_BigData/VOC2012/Annotations/'
+    voc_input_image_dir = '/data/IEEE_BigData/VOC2012/JPEGImages/'
+    car_voc_output_label_dir = f'{voc_car_path}labels' # car image
+    car_voc_output_image_dir = f'{voc_car_path}images' # car label
+    cycle_voc_output_label_dir = f'{voc_cycle_path}labels'
+    cycle_voc_output_image_dir = f'{voc_cycle_path}images'
+    
+    yolo_VOC_setting(voc_input_image_dir,voc_input_label_dir,car_voc_output_image_dir,car_voc_output_label_dir,'car') # car setting
+    yolo_VOC_setting(voc_input_image_dir,voc_input_label_dir,cycle_voc_output_image_dir,cycle_voc_output_label_dir,'motorbike') # cycle setting
+    
+    
+    input_label_dir = '/data/IEEE_BigData/train_001/labels/'
+    input_image_dir = '/data/IEEE_BigData/train_001/images/'
+    car_output_label_dir = f'{train_car_path}labels' # car image
+    car_output_image_dir = f'{train_car_path}images' # car label
+    cycle_output_label_dir = f'{train_cycle_path}labels' # car image
+    cycle_output_image_dir = f'{train_cycle_path}images' # car label
+    
+    yolo_vehicle_folder_setting(input_image_dir,input_label_dir,car_output_image_dir,car_output_label_dir,'car')
+    yolo_vehicle_folder_setting(input_image_dir,input_label_dir,cycle_output_image_dir,cycle_output_label_dir,'motorbike')
+    
+    
+    yolo_folder_setting(parent_path,car_output_image_dir,car_output_label_dir,'car') # training data (car)
+    yolo_folder_setting(parent_path,car_voc_output_image_dir,car_voc_output_label_dir,'car') # voc data (car)
+    yolo_folder_setting(parent_path,cycle_output_image_dir,cycle_output_label_dir,'cycle') # training data (cycle)
+    yolo_folder_setting(parent_path,cycle_voc_output_image_dir,cycle_voc_output_label_dir,'cycle') # voc data (cycle)
