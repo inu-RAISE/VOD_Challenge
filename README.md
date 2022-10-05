@@ -1,3 +1,6 @@
+## Our Environment
+- GPU : NVIDIA RTX A6000 x 2
+
 ## Extra Datasets
 
 Please downloads <a href='https://fcav.engin.umich.edu/projects/driving-in-the-matrix'>VOC Datasets</a>
@@ -8,8 +11,18 @@ Please downloads <a href='https://fcav.engin.umich.edu/projects/driving-in-the-m
 pip install CUT/requirements.txt
 pip install yolov5/requirements.txt
 ```
+## Directory Setting for Extract Local Information using YOLOv5
+```
+class_folder
+| train
+|____ images
+|____ labels
+| val
+|____ images
+|____ labels
+```
 
-## Folder Setting for Generate Synthetic to Real Image
+## Directory Setting for Generate Synthetic to Real Image
 
 ```
 target_folder_name
