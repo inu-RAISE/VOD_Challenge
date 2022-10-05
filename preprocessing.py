@@ -4,6 +4,9 @@ from tqdm import tqdm
 import glob
 import xml.etree.ElementTree as ET
 from tqdm import tqdm
+from sklearn.moedel_selection import train_test_split
+import argparse
+
 
 def xml_to_yolo_bbox(bbox, w, h):
     # xmin, ymin, xmax, ymax
@@ -74,7 +77,7 @@ def yolo_VOC_setting(image_input_dir,label_input_dir,image_output_dir,label_outp
                 f.write("\n".join(result))
             shutil.copy2(image_input_dir+f"{filename}.jpg",image_output_dir+f"{filename}.jpg")
     
-    print('Complete VOC Folder Setting!')
+    print(f'Complete VOC {class_} Folder Setting!')
 
 def yolo_vehicle_folder_setting(image_input_dir,label_input_dir,image_output_dir,label_output_dir,class_):
     
@@ -129,4 +132,55 @@ def yolo_vehicle_folder_setting(image_input_dir,label_input_dir,image_output_dir
                             t.write(f'{cls[c]} {bbox[c:c+4][0]} {bbox[c:c+4][1]} {bbox[c:c+4][2]} {bbox[c:c+4][3]}\n')
                 if check:
                     shutil.copy2(image_input_dir+img_name, image_output_dir+img_name)
-    print('Complete Training Data Setting!')
+    print(f'Complete Training {class_} Data Setting!')
+
+def yolo_folder_setting(path,image_path,label_path,class_):
+    '''
+    path = image label path
+    class_ = car or cycle
+    
+    class_folder
+    | train
+    |____ images
+    |____ labels
+    | val
+    |____ images
+    |____ labels
+    
+    '''
+    path = checking_folder(path)
+    image_path = checking_folder(image_path)
+    label_path = checking_folder(label_path)
+    
+    new_path = path + class_ + '/'
+    if not os.path.exists(new_path):
+        os.mkdir(new_path)
+        os.mkdir(new_path + 'train')
+        os.mkdir(new_path + 'train/images')
+        os.mkdir(new_path + 'train/labels')
+        os.mkdir(new_path + 'val')
+        os.mkdir(new_path + 'val/images')
+        os.mkdir(new_path + 'val/labels')
+        
+    train_label,valid_label = train_test_split(os.listdir(label_path),test_size=.2,random_state = 42)
+    
+    train_image = list(map(lambda x: x.replace('labels','images'),train_label))
+    train_image = list(map(lambda x: x.replace('.txt','.jpg'),train_image))
+    
+    valid_image = list(map(lambda x: x.replace('labels','images'),valid_label))
+    valid_image = list(map(lambda x: x.replace('.txt','.jpg'),valid_image))
+    
+    for img,lab in zip(train_image,train_label):
+        shutil.move(image_path + img,new_path+'train/images/'+img)
+        shutil.move(label_path + lab,new_path+'train/labels/'+lab)
+    
+    for img,lab in zip(valid_image,valid_label):
+        shutil.move(image_path + img,new_path+'val/images/'+img)
+        shutil.move(label_path + lab,new_path+'val/labels/'+lab)
+
+if __name__ == '__main__':
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument('--input_label_dir',type=str)
+    # parser.add_argument('--input_image_dir',type=str)
+    # parser.add_argument('--output_image_dir',type=str)
+    
