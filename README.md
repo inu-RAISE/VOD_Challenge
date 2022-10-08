@@ -19,7 +19,7 @@ pip install requirements.txt
 ## Setting Directory
 If you use our repository, you should reset **path.yaml**
 
-## Directory Setting for Extract Local Information using YOLOv5
+### Directory Setting for Extract Local Information using YOLOv5
 ```
 class_folder
 | train
@@ -29,9 +29,7 @@ class_folder
 |____ images
 |____ labels
 ```
-
-## Directory Setting for Generate Synthetic to Real Image
-
+### Directory Setting for Generate Synthetic to Real Image
 ```
 target_folder_name
 |trainA
@@ -39,7 +37,7 @@ target_folder_name
 |testA
 |testB
 ```
-Defualt direction of CUT  is A to B. i.e A is input images and B is target images.
+Defualt direction of CUT  is A to B. i.e **A is input images and B is target images**.
 
 
 ## Citation
