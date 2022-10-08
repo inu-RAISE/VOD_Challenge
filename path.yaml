@@ -1,0 +1,33 @@
+parent: /data/IEEE_BigData/sub/ # parent folder
+
+voc:
+    image: /data/IEEE_BigData/VOC2012/JPEGImages/ # VOC image dataset
+    label: /data/IEEE_BigData/VOC2012/Annotations/ # VOC label dataset
+
+train:
+    image: /data/IEEE_BigData/train_001/images/ # training image dataset (provided data)
+    label: /data/IEEE_BigData/train_001/labels/ # training label dataset (provided data)
+
+test:
+    v1: /data/IEEE_BigData/test/test_v1/ # test v1 image dataset 
+    v2: /data/IEEE_BigData/test/test_v2/ # tes v2 image dataset
+crop:
+    all: /data/IEEE_BigData/sub/crop_all/ # cropping image (Regardless of the class)
+    car: /data/IEEE_BigData/sub/crop_car/ # training crop car image (not included VOC)
+    cycle: /data/IEEE_BigData/sub/crop_cycle/ # training crop cycle image (not included VOC)
+    test_car: /data/IEEE_BigData/sub/real_car/ # test crop car image
+    test_cycle: /data/IEEE_BigData/sub/real_cycle/ # test crop cycle image
+    
+weight:
+    weight_path: /data/IEEE_BigData/sub/weights/
+    yolo_car_weight: /data/IEEE_BigData/sub/weights/car_best.pt # yolo weights(car)
+    yolo_cycle_weight: /data/IEEE_BigData/sub/weights/cycle_best.pt # yolo weights(cycle)
+    
+
+cut:
+    car: /data/IEEE_BigData/sub/cut_car/
+    cycle: /data/IEEE_BigData/sub/cut_cycle/
+    save_car: /data/IEEE_BigData/sub/gan_car/
+    save_cycle: /data/IEEE_BigData/sub/gan_cycle/
+
+    
