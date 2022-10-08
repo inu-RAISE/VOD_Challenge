@@ -1,16 +1,24 @@
-## Our Environment
-- GPU : NVIDIA RTX A6000 x 2
-
 ## Extra Datasets
 
 Please downloads <a href='https://fcav.engin.umich.edu/projects/driving-in-the-matrix'>VOC Datasets</a>
 
+## Enviornment
 
-## Enviornment Setting
+#### Our enviornment
+- GPU NVIDIA RTS A6000 x 2
+#### Prerequisites
+- python3
+- Linux
+- NVIDA GPU (if you use pretrained model, you should have multi-gpu)
+#### Getting Started
+- git clone repo
 ```
-pip install CUT/requirements.txt
-pip install yolov5/requirements.txt
+git clone https://github.com/inu-RAISE/VCOD_Challenge VCOD && cd VCOD
+pip install requirements.txt
 ```
+## Setting Directory
+If you use our repository, you should reset **path.yaml**
+
 ## Directory Setting for Extract Local Information using YOLOv5
 ```
 class_folder
