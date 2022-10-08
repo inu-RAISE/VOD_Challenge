@@ -5,6 +5,7 @@ import glob
 import xml.etree.ElementTree as ET
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
+from PIL import Image
 
 def xml_to_yolo_bbox(bbox, w, h):
     # xmin, ymin, xmax, ymax
@@ -180,43 +181,64 @@ def yolo_folder_setting(path,image_path,label_path,class_):
     print(f'YOLO folder setting Done!')
 
 
-if __name__ == '__main__':
+def csv_file_setting(image_path,label_path,crop_save_path,csv_save_path,csv_name): # for classification
     
-    parent_path = '/data/IEEE_BigData/sub'
-    voc_car_path = parent_path+'/'+'voc_car/'
-    voc_cycle_path = parent_path+'/'+'voc_cycle/'
-    train_car_path = parent_path+'/'+'train_car/'
-    train_cycle_path = parent_path+'/'+'train_cycle/'
-    
-    mk_folder(parent_path)  
-    mk_folder(voc_car_path)
-    mk_folder(voc_cycle_path)
-    mk_folder(train_car_path)
-    mk_folder(train_cycle_path)
-    
-    voc_input_label_dir = '/data/IEEE_BigData/VOC2012/Annotations/'
-    voc_input_image_dir = '/data/IEEE_BigData/VOC2012/JPEGImages/'
-    car_voc_output_label_dir = f'{voc_car_path}labels' # car image
-    car_voc_output_image_dir = f'{voc_car_path}images' # car label
-    cycle_voc_output_label_dir = f'{voc_cycle_path}labels'
-    cycle_voc_output_image_dir = f'{voc_cycle_path}images'
-    
-    yolo_VOC_setting(voc_input_image_dir,voc_input_label_dir,car_voc_output_image_dir,car_voc_output_label_dir,'car') # car setting
-    yolo_VOC_setting(voc_input_image_dir,voc_input_label_dir,cycle_voc_output_image_dir,cycle_voc_output_label_dir,'motorbike') # cycle setting
-    
-    
-    input_label_dir = '/data/IEEE_BigData/train_001/labels/'
-    input_image_dir = '/data/IEEE_BigData/train_001/images/'
-    car_output_label_dir = f'{train_car_path}labels' # car image
-    car_output_image_dir = f'{train_car_path}images' # car label
-    cycle_output_label_dir = f'{train_cycle_path}labels' # car image
-    cycle_output_image_dir = f'{train_cycle_path}images' # car label
-    
-    yolo_vehicle_folder_setting(input_image_dir,input_label_dir,car_output_image_dir,car_output_label_dir,'car')
-    yolo_vehicle_folder_setting(input_image_dir,input_label_dir,cycle_output_image_dir,cycle_output_label_dir,'motorbike')
-    
-    
-    yolo_folder_setting(parent_path,car_output_image_dir,car_output_label_dir,'car') # training data (car)
-    yolo_folder_setting(parent_path,car_voc_output_image_dir,car_voc_output_label_dir,'car') # voc data (car)
-    yolo_folder_setting(parent_path,cycle_output_image_dir,cycle_output_label_dir,'cycle') # training data (cycle)
-    yolo_folder_setting(parent_path,cycle_voc_output_image_dir,cycle_voc_output_label_dir,'cycle') # voc data (cycle)
+    '''
+    image_path = train image path
+    label_path = train label path
+    crop_save_path = cropped image save path
+    csv_save_path = csv save path
+    csv_name = csv file name ('not using .csv')
+    '''
+    total_label = []
+    img_num = 0
+
+    image_path = checking_folder(image_path)
+    label_path = checking_folder(label_path)
+    crop_save_path = checking_folder(crop_save_path)
+    csv_save_path = checking_folder(csv_save_path)
+
+    img_source = sorted(glob.glob(f'{image_path}*.jpg'))
+    txt_source = sorted(glob.glob(f'{label_path}*.txt'))
+    for i in tqdm(range(len(img_source))[:1]):
+
+        img = Image.open(img_source[i])
+    #    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+        shape = img.size
+
+        txt = open(txt_source[i], "r")
+
+        obj_list = []
+
+        lines = txt.readlines()
+
+        for line in lines:
+            line = line.split(" ")
+            if len(line) != 1:
+                center_x = float(line[1]) * shape[0]
+                center_y = float(line[2]) * shape[1]
+                w = float(line[3]) * shape[1]
+                h = float(line[4]) * shape[0]
+                min_x = max(int(center_x - (w / 2)), 0) #/ shape[1]
+                max_x = min(int(center_x + (w / 2)), shape[0]) #/ shape[1]
+                min_y = max(int(center_y - (h / 2)), 0) #/ shape[0]
+                max_y = min(int(center_y + (h / 2)), shape[1])# / shape[0]
+
+                v_cls = int(line[0])
+                cls = 0 if v_cls<=6 else 1 # car or cycle
+
+                obj_list.append([min_x, min_y, max_x, max_y, cls, v_cls])
+        for j in range(len(obj_list)):
+            img_num = img_num + 1
+            img_ = img.crop((obj_list[j][0],obj_list[j][1],obj_list[j][2],obj_list[j][3]))
+
+            normal_min_x = obj_list[j][0]/shape[0]
+            normal_min_y  = obj_list[j][1]/shape[1]
+            normal_max_x = obj_list[j][2]/shape[0]
+            normal_max_y = obj_list[j][3]/shape[1]
+            total_label.append([f"{crop_save_path}{img_num:07d}.jpg", obj_list[j][4], normal_min_x,normal_min_y,normal_max_x,normal_max_y, obj_list[j][5]])
+            img_.save(f"{crop_save_path}{img_num:07d}.jpg")
+
+    txt_label = pd.DataFrame(total_label, columns = ["File", "Class", "min_x", "min_y", "max_x", "max_y", "v_cls"])
+    txt_label.to_csv(f"{csv_save_path}{name}.csv", index=False)
