@@ -19,7 +19,20 @@ pip install requirements.txt
 ## Setting Directory
 If you use our repository, you should reset **path.yaml**
 
-### Directory Setting for Extract Local Information using YOLOv5
+#### Required weight file
+- yolov5 :  **car** weight file
+- yolov5 : **cycle** weight file
+- CUT : weight folder
+- EfficientNet : weight file
+
+#### Required csv file (location : path.yaml - parent)
+- csv file columns
+  - File : cropped image path (Please check for cropped image)
+  - Class : 0 or 1 (0 is car and truck , 1 is cycle and motorbike)
+  - min_x , min_y, max_x, max_y
+  - v_cls : full class (included orientation label)
+
+#### Directory Setting for Extract Local Information using YOLOv5
 ```
 class_folder
 | train
@@ -29,7 +42,7 @@ class_folder
 |____ images
 |____ labels
 ```
-### Directory Setting for Generate Synthetic to Real Image
+#### Directory Setting for Generate Synthetic to Real Image
 ```
 target_folder_name
 |trainA
@@ -39,7 +52,27 @@ target_folder_name
 ```
 Defualt direction of CUT  is A to B. i.e **A is input images and B is target images**.
 
+## Run code
 
+- One shot process (preprocessing - train - inference)
+ ```
+ python main.py --process all 
+```
+- training (preprocessing - train)
+```
+python main.py --process train
+```
+You can get **CUT weight folder, YOLO weight file and Classification weight file.***
+- inference (preprocessing - inference)
+```
+python main.py --process infer
+```
+Please check **weight file**
+- Fast Inference (Only classification)
+You should already be a **csv file** and **cropped image**. All you need is a **classification weight file**
+```
+python classficiation_inference.py
+```
 ## Citation
 
 ```
