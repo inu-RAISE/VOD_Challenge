@@ -14,7 +14,7 @@ Please downloads <a href='https://fcav.engin.umich.edu/projects/driving-in-the-m
 - git clone repo
 ```
 git clone https://github.com/inu-RAISE/VCOD_Challenge VCOD && cd VCOD
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 ## Setting Directory
 If you use our repository, you should reset **path.yaml**
