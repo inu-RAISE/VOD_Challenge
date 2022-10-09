@@ -1,10 +1,12 @@
+# +
 import os
-from preprocessing import *
 import shutil
 from omegaconf import OmegaConf as OC
 import pandas as pd
 import argpare
 
+from preprocessing import *
+# from yolo_inference import detect_save
 
 # +
 def yolo_preprocessing(path):
@@ -69,7 +71,7 @@ def yolo_train(path):
     shutil.move(project_name+cycle_name+'/'+'weights/best.pt',path.weight.yolo_cycle_weight)
     
 
-def cropping_train(path):
+def cropping_train(path): ## make csv
     # path = yaml_file
     image_path = path.train.image
     label_path = path.train.label
@@ -193,9 +195,10 @@ def CUT_csv(path): # Synthetic to Real image csv
     csv_file = csv_file.append(car_new_csv)
     csv_file = csv_file.append(cycle_new_csv)
     csv_file.reset_index(drop=True,inplace=True)
-    csv_file.to_csv(path.parent+'merge.csv',index=False)
+    csv_file.to_csv(path.parent+'total.csv',index=False)
     
     print("New Csv file Generate")
+    
 
 
 # +
@@ -205,19 +208,47 @@ if __name__ == '__main__':
     yaml_file = OC.load('path.yaml')
     opt = parser.parse_args()
     
+    print('---Folder Setting---')
+    yolo_preprocessing(yaml_file) # arrangement folder for yolo
+    cropping_train(yaml_file) # csv file setting & cropped image save
     
     if opt.process == 'all':
-        yolo_preprocessing(yaml_file)
-        cropping_train(yaml_file)
-        yolo_train(yaml_file)
-        cropping_test(yaml_file)
+        ## yolo setting
+        yolo_train(yaml_file) # training yolo
+        cropping_test(yaml_file) # cropping
+        
+        ## cut setting
         cut_folder_setting(yaml_file)
         CUT(yaml_file,'car_cut','car','train') # training CUT model (car)
-        CUT(yaml_file,'cycle_cut','cycle','train') # testing CUT model (cycle)
-        CUT(yaml_file,'car_cut','car','test')
-        CUT(yaml_file,'cycle_cut','cycle','test')
-        CUT_csv(yaml_file)
+        CUT(yaml_file,'cycle_cut','cycle','train') # training CUT model (cycle)
+        CUT(yaml_file,'car_cut','car','test') # testing CUT model (cycle)
+        CUT(yaml_file,'cycle_cut','cycle','test') # testing CUT model (cycle)
+        CUT_csv(yaml_file) # final_csv file setting
         
+        ## create submission file (Do not categorize labels)
+        os.system('python yolo_inference.py')
+        os.system('python classification_train.py')
+        ## final inference
+        os.system('python classification_inference.py')
         
+    if opt.process == 'train':
+        yolo_train(yaml_file) # training yolo
+        cropping_test(yaml_file) # cropping
         
-    
+        ## cut setting
+        cut_folder_setting(yaml_file)
+        CUT(yaml_file,'car_cut','car','train') # training CUT model (car)
+        CUT(yaml_file,'cycle_cut','cycle','train') # training CUT model (cycle)
+        CUT_csv(yaml_file) # final_csv file setting
+        os.system('python classification_train.py')
+        
+    if opt.process == 'infer': # using pretrained model
+        print('Please Check weight file!!')
+        cropping_test(yaml_file) # cropping
+        cut_folder_setting(yaml_file)
+        CUT(yaml_file,'car_cut','car','test') # testing CUT model (cycle)
+        CUT(yaml_file,'cycle_cut','cycle','test') # testing CUT model (cycle)
+        os.system('python yolo_inference.py') # create submission file 
+        os.system('python classification_inference.py')
+       
+        

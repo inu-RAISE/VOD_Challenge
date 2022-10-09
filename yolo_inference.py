@@ -24,8 +24,11 @@ import copy
 from easydict import EasyDict as edict
 import datetime
 
+from omegaconf import OmegaConf as OC
+
+path = OC.load('path.yaml')
 opt = edict({
-    "yolo_model" : "/data/IEEE_BigData/sub/weights/car_best.pt",
+    "yolo_model" : path.weight.yolo_car_weight),
     "output" : "inference/output",
     "conf_thres" : 0.1,
     "iou_thres" : 0.3,
