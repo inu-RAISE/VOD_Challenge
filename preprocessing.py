@@ -6,6 +6,7 @@ import xml.etree.ElementTree as ET
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
 from PIL import Image
+import pandas as pd
 
 def xml_to_yolo_bbox(bbox, w, h):
     # xmin, ymin, xmax, ymax
@@ -200,7 +201,7 @@ def csv_file_setting(image_path,label_path,crop_save_path,csv_save_path,csv_name
 
     img_source = sorted(glob.glob(f'{image_path}*.jpg'))
     txt_source = sorted(glob.glob(f'{label_path}*.txt'))
-    for i in tqdm(range(len(img_source))[:1]):
+    for i in tqdm(range(len(img_source))):
 
         img = Image.open(img_source[i])
     #    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -241,4 +242,4 @@ def csv_file_setting(image_path,label_path,crop_save_path,csv_save_path,csv_name
             img_.save(f"{crop_save_path}{img_num:07d}.jpg")
 
     txt_label = pd.DataFrame(total_label, columns = ["File", "Class", "min_x", "min_y", "max_x", "max_y", "v_cls"])
-    txt_label.to_csv(f"{csv_save_path}{name}.csv", index=False)
+    txt_label.to_csv(f"{csv_save_path}{csv_name}.csv", index=False)

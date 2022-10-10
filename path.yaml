@@ -20,14 +20,16 @@ crop:
     
 weight:
     weight_path: /data/IEEE_BigData/sub/weights/
+    cut_car_weight: /data/IEEE_BigData/sub/weights/cut_car/ # cut weights
+    cut_cycle_weight: /data/IEEE_BigData/sub/weights/cut_cycle/ # cut weight
     yolo_car_weight: /data/IEEE_BigData/sub/weights/car_best.pt # yolo weights(car)
     yolo_cycle_weight: /data/IEEE_BigData/sub/weights/cycle_best.pt # yolo weights(cycle)
     class_weight: ./models/Py_efficientnet-b7_GAN_0922_25_20.pt
-
+    
 
 cut:
-    car: /data/IEEE_BigData/sub/cut_car/
-    cycle: /data/IEEE_BigData/sub/cut_cycle/
+    car: /data/IEEE_BigData/sub/cut_car/ # CUT dataroot
+    cycle: /data/IEEE_BigData/sub/cut_cycle/ # CUT dataroot
     save_car: /data/IEEE_BigData/sub/gan_car/
     save_cycle: /data/IEEE_BigData/sub/gan_cycle/
 
@@ -35,5 +37,4 @@ result:
     dir: ./submission/
     v1: ./submission/test_v1_submission.txt
     v2: ./submission/test_v2_submission.txt
-
     
