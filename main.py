@@ -3,7 +3,7 @@ import os
 import shutil
 from omegaconf import OmegaConf as OC
 import pandas as pd
-import argpare
+import argparse
 
 from preprocessing import *
 # from yolo_inference import detect_save
@@ -80,13 +80,15 @@ def cropping_train(path): ## make csv
     
     mk_folder(crop_save_path)
     csv_name = 'train_image_crop'
-    csv_file_setting(image_path,label_path,csv_save_path,csv_save_path,csv_name)
+    csv_file_setting(image_path,label_path,crop_save_path,csv_save_path,csv_name)
     print('Train Dataset cropping Done!')
     
 def cropping_test(path): 
     # path = yaml_file
     project_name = path.parent + 'results/'
-    
+    ## init
+    if os.path.exists(project_name):
+        shutil.rmtree(project_name)
     real_car_name = 'real_car_crop'
     real_cycle_name = 'real_cycle_crop'
     
@@ -96,30 +98,32 @@ def cropping_test(path):
     car_weight_path = path.weight.yolo_car_weight
     cycle_weight_path = path.weight.yolo_cycle_weight
     
+    car_data = 'yolov5/data/car.yaml'
+    cycle_data = 'yolov5/data/cycle.yaml'
     ### test set Cropping (car)
-    os.system(f"python yolov5/detect.py --source {v1_real_image_path} --weights {car_weight_path} --project {project_name} --name {real_car_name} --save-crop")
-    os.system(f"python yolov5/detect.py --source {v2_real_image_path} --weights {car_weight_path} --project {project_name} --name {real_car_name+'_2'} --save-crop")
+    os.system(f"python yolov5/detect.py --source {v1_real_image_path} --weights {car_weight_path} --project {project_name} --name {real_car_name} --save-crop --data {car_data}")
+    os.system(f"python yolov5/detect.py --source {v2_real_image_path} --weights {car_weight_path} --project {project_name} --name {real_car_name+'_2'} --save-crop --data {car_data}")
     
     ### test set cropping (cycle)
-    os.system(f"python yolov5/detect.py --source {v1_real_image_path} --weights {cycle_weight_path} --project {project_name} --name {real_cycle_name} --save-crop")
-    os.system(f"python yolov5/detect.py --source {v2_real_image_path} --weights {cycle_weight_path} --project {project_name} --name {real_cycle_name+'_2'} --save-crop")
+    os.system(f"python yolov5/detect.py --source {v1_real_image_path} --weights {cycle_weight_path} --project {project_name} --name {real_cycle_name} --save-crop --data {cycle_data}")
+    os.system(f"python yolov5/detect.py --source {v2_real_image_path} --weights {cycle_weight_path} --project {project_name} --name {real_cycle_name+'_2'} --save-crop --data {cycle_data}")
     
     ## Arrangement Folder
     mk_folder(path.crop.test_car)
     mk_folder(path.crop.test_cycle)
     
-    for idx,real_jpg in enumerate(sorted(glob.glob(project_name + real_car_name + '/*.jpg'))):
+    for idx,real_jpg in tqdm(enumerate(sorted(glob.glob(project_name + real_car_name + '/crops/car/*.jpg')))):
         shutil.move(real_jpg, path.crop.test_car  + f'v1_{idx:07d}.jpg')
-    for idx,real_jpg in enumerate(sorted(glob.glob(project_name + real_car_name + '_2/*.jpg'))):
+    for idx,real_jpg in tqdm(enumerate(sorted(glob.glob(project_name + real_car_name + '_2/crops/car/*.jpg')))):
         shutil.move(real_jpg, path.crop.test_car + f'v2_{idx:07d}.jpg')
-    for idx,real_jpg in enumerate(sorted(glob.glob(project_name + real_cycle_name + '/*.jpg'))):
+    for idx,real_jpg in tqdm(enumerate(sorted(glob.glob(project_name + real_cycle_name + '/crops/car/*.jpg')))):
         shutil.move(real_jpg, path.crop.test_cycle + f'v1_{idx:07d}.jpg')
-    for idx,real_jpg in enumerate(sorted(glob.glob(project_name + real_cycle_name + '_2/*.jpg'))):
+    for idx,real_jpg in tqdm(enumerate(sorted(glob.glob(project_name + real_cycle_name + '_2/crops/car/*.jpg')))):
         shutil.move(real_jpg, path.crop.test_cycle + f'v2_{idx:07d}.jpg')
     
-    os.remove(project_name+real_car_name+'car')
-    os.remove(project_name+real_cycle_name+'cycle')
-    
+    shutil.rmtree(project_name+real_car_name+'/'+'crops/car')
+    shutil.rmtree(project_name+real_cycle_name+'/'+'crops/cycle')
+    print('Test image Cropping!')
 def cut_folder_setting(path):
     # path = yaml_file
     
@@ -140,7 +144,7 @@ def cut_folder_setting(path):
     mk_folder(cycle_cut_path + 'testB')
     
     ### synthetic image setting (trainA = testA)
-    for cls, cut_train_name in zip(data['cls'],sorted(glob.glob(path.crop.all+'*.jpg'))):
+    for cls, cut_train_name in tqdm(zip(csv_file['Class'],sorted(glob.glob(path.crop.all+'*.jpg')))):
         name = cut_train_name.split('/')[-1]
         
         if cls == 0: # car
@@ -149,18 +153,21 @@ def cut_folder_setting(path):
         else: # cycle
             shutil.copy2(cut_train_name,cycle_cut_path + 'trainA/'+name)
             shutil.copy2(cut_train_name,cycle_cut_path + 'testA/'+name)
-            
+    print('A setting Done!')
     ### Real image setting (trainB = testB)
-    for real_cut in sorted(glob.glob(path.crop.test_car+'*.jpg')):
+    for real_cut in tqdm(sorted(glob.glob(path.crop.test_car+'*.jpg'))):
         name = real_cut.split('/')[-1]
-        shutil.copy2(cut_name,car_cut_path + 'trainB/'+name)
-        shutil.copy2(cut_name,car_cut_path + 'testB/'+name)
+        shutil.copy2(real_cut,car_cut_path + 'trainB/'+name)
+        shutil.copy2(real_cut,car_cut_path + 'testB/'+name)
         
-    for real_cut in sorted(glob.glob(path.crop.test_cycle+'*.jpg')):
+    for real_cut in tqdm(sorted(glob.glob(path.crop.test_cycle+'*.jpg'))):
         name = real_cut.split('/')[-1]
-        shutil.copy2(cut_name,cycle_cut_path + 'trainB/'+name)
-        shutil.copy2(cut_name,cycle_cut_path + 'testB/'+name)
+        shutil.copy2(real_cut,cycle_cut_path + 'trainB/'+name)
+        shutil.copy2(real_cut,cycle_cut_path + 'testB/'+name)
     print('CUT folder Setting Complete!!')
+    
+    print('B setting Done!')
+    
 def CUT(path,file_name,cls,mode):
     # path = yaml_file
     # file name = result folder
@@ -174,9 +181,9 @@ def CUT(path,file_name,cls,mode):
     if mode == 'train':
         os.system(f'python CUT/train.py --dataroot {root} --name {file_name}--CUT_mode CUT --phase train --n_epochs 100 --batch 2 --gpu_ids 0,1 --preprocess resize --num_threads 0 --checkpoints_dir {checkpoint}')
     if mode == 'test':
-        os.system(f'python CUT/test.py --dataroot {root} --name {file_name} --CUT_mode CUT --phase test --gpu_ids 0,1 --preprocess resize --num_threads 0 --num_test 10000000')
+        os.system(f'python CUT/test.py --dataroot {root} --name {checkpoint+file_name} --CUT_mode CUT --phase test --preprocess resize --num_threads 0 --num_test 10000000')
         ## directory arrangement
-        for i in tqdm(sorted(glob.glob(f'results/{file_name}/test_latest/images/fakeB/*.png'))):
+        for i in tqdm(sorted(glob.glob(f'{checkpoint+file_name}/test_latest/images/fake_B/*.png'))):
             name = i.split('/')[-1]
             shutil.move(i, path.cut.save_car+name)
     
@@ -209,8 +216,9 @@ if __name__ == '__main__':
     opt = parser.parse_args()
     
     print('---Folder Setting---')
-    yolo_preprocessing(yaml_file) # arrangement folder for yolo
-    cropping_train(yaml_file) # csv file setting & cropped image save
+#     yolo_preprocessing(yaml_file) # arrangement folder for yolo
+#     cropping_train(yaml_file) # csv file setting & cropped image save
+    print('--Done--')
     
     if opt.process == 'all':
         ## yolo setting
@@ -237,8 +245,8 @@ if __name__ == '__main__':
         
         ## cut setting
         cut_folder_setting(yaml_file)
-        CUT(yaml_file,'car_cut','car','train') # training CUT model (car)
-        CUT(yaml_file,'cycle_cut','cycle','train') # training CUT model (cycle)
+        CUT(yaml_file,'cut_car','car','train') # training CUT model (car)
+        CUT(yaml_file,'cut_cycle','cycle','train') # training CUT model (cycle)
         CUT_csv(yaml_file) # final_csv file setting
         os.system('python classification_train.py')
         
@@ -246,8 +254,8 @@ if __name__ == '__main__':
         print('Please Check weight file!!')
         cropping_test(yaml_file) # cropping
         cut_folder_setting(yaml_file)
-        CUT(yaml_file,'car_cut','car','test') # testing CUT model (cycle)
-        CUT(yaml_file,'cycle_cut','cycle','test') # testing CUT model (cycle)
+        CUT(yaml_file,'cut_car','car','test') # testing CUT model (car)
+        CUT(yaml_file,'cut_cycle','cycle','test') # testing CUT model (cycle)
         os.system('python yolo_inference.py') # create submission file 
         os.system('python classification_inference.py')
        
