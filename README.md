@@ -15,6 +15,8 @@ Please downloads <a href='https://fcav.engin.umich.edu/projects/driving-in-the-m
 ```
 git clone https://github.com/inu-RAISE/VCOD_Challenge VCOD && cd VCOD
 pip install -r requirements.txt
+pip install -U typing_extensions
+pip install -U albumentations
 ```
 ## Setting Directory
 If you use our repository, you should reset **path.yaml**
