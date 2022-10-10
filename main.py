@@ -216,8 +216,8 @@ if __name__ == '__main__':
     opt = parser.parse_args()
     
     print('---Folder Setting---')
-#     yolo_preprocessing(yaml_file) # arrangement folder for yolo
-#     cropping_train(yaml_file) # csv file setting & cropped image save
+    yolo_preprocessing(yaml_file) # arrangement folder for yolo
+    cropping_train(yaml_file) # csv file setting & cropped image save
     print('--Done--')
     
     if opt.process == 'all':
