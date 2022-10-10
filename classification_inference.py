@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pandas as pd
 import numpy as np
 from glob import glob
@@ -18,7 +19,6 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 import albumentations as A
 from efficientnet_pytorch import EfficientNet
 from pprint import pprint
-import timm
 import random
 
 import os
@@ -54,8 +54,8 @@ decoder = {"0" : "car_back",
 path = OC.load('path.yaml')
 
 
-v1_txt = open(path.result.v1, "r") # 앞서 inference 한 txt
-v2_txt = open(path.result.v2,"r") # 앞서 inference한 txt
+v1_txt = open(path.result.v1, "r") # Previously inferred txt file
+v2_txt = open(path.result.v2,"r") # Previously inferred txt file
 
 def infer(txt,test_name):
     if test_name == 'v1':
@@ -64,12 +64,11 @@ def infer(txt,test_name):
         data_path = path.test.v2
     total_txt = []
     lines = txt.readlines()
-    for line in tqdm(lines):
+    for line in lines:
         line = line.split(" ")
         total_txt.append(line)
 
-    model = [torch.load(f"./models/Py_efficientnet-b7_GAN_0922_25_{i}.pt", map_location="cuda:0") for i in range(1, 6)]
-    model.append(torch.load(f"./models/Py_efficientnet-b7_Semi_0928_25_0.pt", map_location="cuda:0")) # 이거 진짜 했다고..?
+    model = [torch.load(f"{path.weight.class_weight}/Py_efficientnet-b7_GAN_0922_25_{i}.pt", map_location="cuda:0") for i in range(1, 6)]
 
     m = nn.Softmax(dim=1)
     result_txt = []
@@ -116,7 +115,8 @@ def infer(txt,test_name):
             file_result.append(max_y)
             
         result_txt.append(file_result)
-    submission = open(f"./submission/final_{test_name}_submission_0930_01.txt", "w")
+    print(result_txt)
+    submission = open(f"./submission/final_{test_name}_submission.txt", "w")
     for i in tqdm(result_txt):
         line = ""
         for j in i:
@@ -125,3 +125,8 @@ def infer(txt,test_name):
             
         submission.write(line)
     submission.close()
+
+
+if __name__ == '__main__':
+    infer(v1_txt,'v1')
+    infer(v2_txt,'v2')
