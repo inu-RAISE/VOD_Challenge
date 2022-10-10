@@ -24,14 +24,14 @@ weight:
     cut_cycle_weight: /data/IEEE_BigData/sub/weights/cut_cycle/ # cut weight
     yolo_car_weight: /data/IEEE_BigData/sub/weights/car_best.pt # yolo weights(car)
     yolo_cycle_weight: /data/IEEE_BigData/sub/weights/cycle_best.pt # yolo weights(cycle)
-    class_weight: ./models/Py_efficientnet-b7_GAN_0922_25_20.pt
+    class_weight: /data/IEEE_BigData/sub/weights/models/
     
 
 cut:
     car: /data/IEEE_BigData/sub/cut_car/ # CUT dataroot
     cycle: /data/IEEE_BigData/sub/cut_cycle/ # CUT dataroot
-    save_car: /data/IEEE_BigData/sub/gan_car/
-    save_cycle: /data/IEEE_BigData/sub/gan_cycle/
+    save_car: /data/IEEE_BigData/sub/gan_car/ # save CUT output (car)
+    save_cycle: /data/IEEE_BigData/sub/gan_cycle/ # save CUT output (cycle)
 
 result:
     dir: ./submission/
