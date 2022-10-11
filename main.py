@@ -183,9 +183,14 @@ def CUT(path,file_name,cls,mode):
     if mode == 'test':
         os.system(f'python CUT/test.py --dataroot {root} --name {checkpoint+file_name} --CUT_mode CUT --phase test --preprocess resize --num_threads 0 --num_test 10000000')
         ## directory arrangement
-        for i in tqdm(sorted(glob.glob(f'{checkpoint+file_name}/test_latest/images/fake_B/*.png'))):
-            name = i.split('/')[-1]
-            shutil.move(i, path.cut.save_car+name)
+        if cls == 'car':
+            for i in tqdm(sorted(glob.glob(f'{checkpoint+file_name}/test_latest/images/fake_B/*.png'))):
+                name = i.split('/')[-1]
+                shutil.move(i, path.cut.save_car+name)
+        if cls == 'cycle':
+            for i in tqdm(sorted(glob.glob(f'{checkpoint+file_name}/test_latest/images/fake_B/*.png'))):
+                name = i.split('/')[-1]
+                shutil.move(i, path.cut.save_cycle+name)
     
 def CUT_csv(path): # Synthetic to Real image csv
     csv_file = pd.read_csv(path.parent + 'train_image_crop.csv')
