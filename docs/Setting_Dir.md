@@ -29,7 +29,7 @@ CUT_folder
 |testA
 |testB
 ```
-
+Defualt direction of CUT  is A to B. i.e **A is input images and B is target images**.
 ### YOLO series
 
 - **path.yaml**
