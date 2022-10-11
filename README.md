@@ -21,11 +21,12 @@ pip install -U albumentations
 ## Setting Directory
 If you use our repository, you should reset **path.yaml**
 
-#### Required weight file
-- yolov5 :  **car** weight file
-- yolov5 : **cycle** weight file
-- CUT : weight folder
-- EfficientNet : weight file
+#### Required weight file (Pretrained)
+- yolov5 :  <a href='https://drive.google.com/file/d/1pvCgh97NLJ0qfZpq8tUnpyosqoqX1FRa/view?usp=sharing'>**car** weight file</a>
+- yolov5 : <a href='https://drive.google.com/file/d/1520eFOqhCOyvWlXdQf9GusIHkLnIRMui/view?usp=sharing'>**cycle** weight file</a>
+- CUT : <a href='https://drive.google.com/file/d/1JlkQxBHxHFDGxbWjq3KR2ReoRHWAQGMc/view?usp=sharing'>**car** weight **zip** </a>
+- CUT : <a href='https://drive.google.com/file/d/1H8QdT-fOEj-BvlGgc8XFiMSsWROqbrt7/view?usp=sharing'>**cycle** weight **zip** folder</a>
+- EfficientNet : <a href='https://drive.google.com/drive/folders/1uPxwFl5-Eq_-2AFvZNvZ_r_Awpx95ida?usp=sharing'>classifcation weight folder (1~5) </a>
 
 #### Required csv file (location : path.yaml - parent)
 - csv file columns
