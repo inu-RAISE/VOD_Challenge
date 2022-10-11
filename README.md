@@ -35,25 +35,8 @@ If you use our repository, you should reset **path.yaml**
   - min_x , min_y, max_x, max_y
   - v_cls : full class (included orientation label)
 
-#### Directory Setting for Extract Local Information using YOLOv5
-```
-class_folder
-| train
-|____ images
-|____ labels
-| val
-|____ images
-|____ labels
-```
-#### Directory Setting for Generate Synthetic to Real Image
-```
-target_folder_name
-|trainA
-|trainB
-|testA
-|testB
-```
-Defualt direction of CUT  is A to B. i.e **A is input images and B is target images**.
+If you want more detail about directory, please **check <a href='https://github.com/inu-RAISE/VCOD_Challenge/blob/master/docs/Setting_Dir.md'>docs/Setting_dir.md</a>**
+
 
 ## Run code
 
