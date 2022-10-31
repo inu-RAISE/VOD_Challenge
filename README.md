@@ -1,12 +1,12 @@
 <p align='center'>
-  <b>IEEE BigData Challenge Cup 2022</b>
+    <b>IEEE BigData Challenge Cup 2022</b>
 </p>
 <p align='center'>
   <a href='https://vod2022.sekilab.global/'>Vehicle class and Orientation Detection Challenge 2022</a>
 </p>
 
 ## Overview
-
+<img src='https://github.com/inu-RAISE/VOD_Challenge/blob/master/pic/fig2.PNG?raw=true'></img>
 ## Extra Datasets
 
 Please downloads <a href='https://fcav.engin.umich.edu/projects/driving-in-the-matrix'>VOC Datasets</a>
