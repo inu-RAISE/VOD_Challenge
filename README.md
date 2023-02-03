@@ -1,9 +1,11 @@
-<p align='center'>
-    <b>IEEE BigData Challenge Cup 2022</b>
-</p>
-<p align='center'>
-  <a href='https://vod2022.sekilab.global/'>Vehicle class and Orientation Detection Challenge 2022</a>
-</p>
+# A 2-stage model for vehicle class and orientation detection with photo-realistic image generation
+By <a href='https://github.com/winston1214'>Youngmin Kim*</a>, <a href='https://github.com/anima0729'>Donghwa Kang*</a> Hyeonboo Baek (* is co-author)
+
+**RAISE Lab in Incheon National University**
+
+IEEE BigData Challenge Cup 2022 <a href='https://vod2022.sekilab.global/'>Vehicle class and Orientation Detection Challenge 2022</a>
+
+Our paper : https://ieeexplore.ieee.org/abstract/document/10020472
 
 ## Overview
 <img src='https://github.com/inu-RAISE/VOD_Challenge/blob/master/pic/fig2.PNG?raw=true'></img>
@@ -69,6 +71,18 @@ You should already be a **csv file** and **cropped image**. All you need is a **
 python classficiation_inference.py
 ```
 ## Citation
+```
+@inproceedings{kim20222,
+  title={A 2-Stage Model for Vehicle Class and Orientation Detection with Photo-Realistic Image Generation},
+  author={Kim, Youngmin and Kang, Donghwa and Baek, Hyeongboo},
+  booktitle={2022 IEEE International Conference on Big Data (Big Data)},
+  pages={6489--6493},
+  year={2022},
+  organization={IEEE}
+}
+```
+
+## Reference
 
 ```
 https://github.com/ultralytics/yolov5
